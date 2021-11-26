@@ -12,16 +12,16 @@ const int cC = 0;	  //black city
 const int msize = 25; //map size
 const int mount = 25; //mountain count
 const int grey = 25;  //city count
-const int pmain = 1;  //³ÇÊĞhpÃ¿»ØºÏÔö¼ÓÁ¿
-const int lcnt = 25;  //µØÃæhpÔö¼Ó1ËùĞè»ØºÏ
+const int pmain = 1;  //åŸå¸‚hpæ¯å›åˆå¢åŠ é‡
+const int lcnt = 25;  //åœ°é¢hpå¢åŠ 1æ‰€éœ€å›åˆ
 
-char cMap[msize][msize]; //´óĞ´×ÖÄ¸±íÊ¾³ÇÊĞ£¬Ğ¡Ğ´±íÊ¾µØÃæ£¬AaÊÇºì£¬BbÊÇÀ¶£¬CÊÇ°×£¬XÊÇÕÏ°­
+char cMap[msize][msize]; //å¤§å†™å­—æ¯è¡¨ç¤ºåŸå¸‚ï¼Œå°å†™è¡¨ç¤ºåœ°é¢ï¼ŒAaæ˜¯çº¢ï¼ŒBbæ˜¯è“ï¼ŒCæ˜¯ç™½ï¼ŒXæ˜¯éšœç¢
 int hp[msize][msize];
-int nCount, sx, sy;							//»ØºÏÀÛ¼Ó£¬ºÍ¹â±êµÄ×ø±ê
+int nCount, sx, sy;							//å›åˆç´¯åŠ ï¼Œå’Œå…‰æ ‡çš„åæ ‡
 bool bVis[msize][msize];					//bfs
 int dir[4][2] = {1, 0, -1, 0, 0, 1, 0, -1}; //bfs
 
-//¾ö²ßĞÅÏ¢£ºÎ»ÖÃÎª(x,y)µÄÊıÒÆµ½(x+dx,y+dy)
+//å†³ç­–ä¿¡æ¯ï¼šä½ç½®ä¸º(x,y)çš„æ•°ç§»åˆ°(x+dx,y+dy)
 struct dRet
 {
 	int x;
@@ -38,29 +38,29 @@ struct node
 	int step;
 };
 
-void vInit();					   //Éú³ÉµØÍ¼
-inline void vMove(int dx, int dy); //ÒÆ¶¯¹â±ê
-//ÒÔÏÂ5¸öº¯Êı£¬±£Ö¤A=='A'||A=='B'
+void vInit();					   //ç”Ÿæˆåœ°å›¾
+inline void vMove(int dx, int dy); //ç§»åŠ¨å…‰æ ‡
+//ä»¥ä¸‹5ä¸ªå‡½æ•°ï¼Œä¿è¯A=='A'||A=='B'
 inline void vMoveNum(int dx, int dy, char A);
 inline void vMoveNum(int x, int y, int dx, int dy, char A);
 inline void vDiv(int dx, int dy, char A);
 inline void vDecide(char A);
 inline dRet bfs(int x, int y, char A);
-inline void vPlus();			   //Ã¿»ØºÏÊıÖµÔö¼Ó£¬¼ÆËãarmyºÍland
-inline void vChange(int x, int y); //Ë¢ĞÂÆÁÄ»ÉÏÖ¸¶¨×ø±êµÄÊı
-inline void gotoxy(int x, int y);  //ÒÆ¶¯Êä³öµÄÎ»ÖÃ
-inline void color(int t, int b);   //ÉèÖÃÊä³öÑÕÉ«£¬tÎªÎÄ×ÖÉ«£¬bÎª±³¾°É«
+inline void vPlus();			   //æ¯å›åˆæ•°å€¼å¢åŠ ï¼Œè®¡ç®—armyå’Œland
+inline void vChange(int x, int y); //åˆ·æ–°å±å¹•ä¸ŠæŒ‡å®šåæ ‡çš„æ•°
+inline void gotoxy(int x, int y);  //ç§»åŠ¨è¾“å‡ºçš„ä½ç½®
+inline void color(int t, int b);   //è®¾ç½®è¾“å‡ºé¢œè‰²ï¼Œtä¸ºæ–‡å­—è‰²ï¼Œbä¸ºèƒŒæ™¯è‰²
 void vMain0();
 void vMain1();
-void vEnd(); //ÅĞ¶ÏÓÎÏ·½áÊø
+void vEnd(); //åˆ¤æ–­æ¸¸æˆç»“æŸ
 
 int main()
 {
 	bool p;
 	int fs;
-	cout << "Íæ·¨ (0: Íæ¼Ò VS AI, 1: AI VS AI) : ";
+	cout << "ç©æ³• (0: ç©å®¶ VS AI, 1: AI VS AI) : ";
 	cin >> p;
-	cout << "×ÖÌå´óĞ¡: ";
+	cout << "å­—ä½“å¤§å°: ";
 	cin >> fs;
 	system("cls");
 	CONSOLE_FONT_INFOEX cfi;
@@ -88,7 +88,7 @@ void vMain0()
 	{
 		gotoxy(msize, 0);
 		color(15, 0);
-		cout << "µÚ" << nCount << "»ØºÏ" << endl;
+		cout << "ç¬¬" << nCount << "å›åˆ" << endl;
 		if (cur)
 		{
 			do
@@ -124,7 +124,7 @@ void vMain1()
 	{
 		gotoxy(msize, 0);
 		color(15, 0);
-		cout << "µÚ" << nCount << "»ØºÏ" << endl;
+		cout << "ç¬¬" << nCount << "å›åˆ" << endl;
 		do
 		{
 			in = getch();
@@ -171,7 +171,7 @@ void vInit()
 	int i, x, y;
 	string sSeed;
 	unsigned int sd = 20190622;
-	cout << "ÖÖ×Ó: ";
+	cout << "ç§å­: ";
 	cin >> sSeed;
 	system("cls");
 	for (i = 0; i < (int)sSeed.size(); i++)
@@ -230,7 +230,7 @@ inline void vMove(int dx, int dy)
 	gotoxy(sx, sy * 5 + 4);
 	cout << "<";
 	gotoxy(msize + 1, 0);
-	cout << "ÓµÓĞÕß: Íæ¼Ò" << cMap[dx][dy] << ", ±øÁ¦: " << hp[dx][dy] << "            ";
+	cout << "æ‹¥æœ‰è€…: ç©å®¶" << cMap[dx][dy] << ", å…µåŠ›: " << hp[dx][dy] << "            ";
 }
 
 inline void vMoveNum(int x, int y, int dx, int dy, char A)
@@ -466,10 +466,10 @@ inline void vPlus()
 	}
 	color(15, 0);
 	gotoxy(msize + 2, 0);
-	cout << "ºì·½±øÁ¦: " << aa << "   " << endl;
-	cout << "ºì·½ÍÁµØ: " << al << "   " << endl;
-	cout << "À¶·½±øÁ¦: " << ba << "   " << endl;
-	cout << "À¶·½ÍÁµØ: " << bl << "   " << endl;
+	cout << "çº¢æ–¹å…µåŠ›: " << aa << "   " << endl;
+	cout << "çº¢æ–¹åœŸåœ°: " << al << "   " << endl;
+	cout << "è“æ–¹å…µåŠ›: " << ba << "   " << endl;
+	cout << "è“æ–¹åœŸåœ°: " << bl << "   " << endl;
 	vEnd();
 }
 
@@ -478,13 +478,13 @@ void vEnd()
 
 	if (cMap[0][0] == 'B')
 	{
-		cout << "À¶·½»ñÊ¤" << endl;
+		cout << "è“æ–¹è·èƒœ" << endl;
 		while (1)
 			;
 	}
 	if (cMap[msize - 1][msize - 1] == 'A')
 	{
-		cout << "ºì·½»ñÊ¤" << endl;
+		cout << "çº¢æ–¹è·èƒœ" << endl;
 		while (1)
 			;
 	}
