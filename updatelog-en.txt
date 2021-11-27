@@ -1,2 +1,5 @@
 2021/11/26:
 	Added updatelog.
+2021/11/27:
+	Added level system of AI.
+	Move console functions into console.dll
