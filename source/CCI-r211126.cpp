@@ -40,6 +40,7 @@ struct node
 
 void vInit();					   //生成地图
 inline void vMove(int dx, int dy); //移动光标
+
 //以下5个函数，保证A=='A'||A=='B'
 inline void vMoveNum(int dx, int dy, char A);
 inline void vMoveNum(int x, int y, int dx, int dy, char A);
@@ -50,6 +51,7 @@ inline void vPlus();			   //每回合数值增加，计算army和land
 inline void vChange(int x, int y); //刷新屏幕上指定坐标的数
 inline void gotoxy(int x, int y);  //移动输出的位置
 inline void color(int t, int b);   //设置输出颜色，t为文字色，b为背景色
+
 void vMain0();
 void vMain1();
 void vEnd(); //判断游戏结束
