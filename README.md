@@ -7,6 +7,7 @@
 *   最新版本: r211127
 * 	更新日期: 2021/11/27
 * 	bug反馈: https://github.com/YJY0807qwq/C2OI-Civilizations-I/issues/new
+*   确认你的编译器支持c++20
 * 	Copyright (c) 2021 C2OI Code&Game Studios | YJY0807qwq, All rights reserved.
 * 	仅在洛谷和 Github 发布
 # English
@@ -18,5 +19,6 @@
 * 	Latest Version: r211127
 * 	Update: 2021/11/27
 * 	Bug report: https://github.com/YJY0807qwq/C2OI-Civilizations-I/issues/new
+* 	Make sure your compiler supports c++20
 * 	Copyright (c) 2021 C2OI Code&Game Studios | YJY0807qwq, All rights reserved.
 * 	Only on Luogu and Github
