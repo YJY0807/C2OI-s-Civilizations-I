@@ -1,8 +1,12 @@
 #include <bits/stdc++.h>
 #include <console.hpp>
+#include <windows.h>
 #include <conio.h>
 
 using namespace std;
+using namespace Console;
+
+#define Kbhit(VK_NONAME) ((GetAsyncKeyState(VK_NONAME) & 0x8000) ? 1 : 0)
 
 const int cA = 5;	   //Red city
 const int cB = 3;	   //Blue city
@@ -46,69 +50,96 @@ inline void gMoveNum(int x, int y, int dx, int dy, char A);
 inline void gDiv(int dx, int dy, char A);
 inline void gDecide(char A, bool d);
 inline dRet gBFS(int x, int y, char A);
-inline void gPlus();			   //Increases the army every round, count army and land
+inline void gPlus();			   //Increase the army every round, count army and land
 inline void gChange(int x, int y); //Refresh the number of specified coordinates on the screen
 
 void gMain0();
 void gMain1();
+void gPause();
 void gEnd(); //Check the game is over
 
 int main()
 {
 	bool p;
 	int fs;
-	cout << "Íæ·¨ (0: Íæ¼Ò VS AI, 1: AI VS AI) : ";
+	cInitConsole();
+	cout << "çŽ©æ³• (0: çŽ©å®¶ VS AI, 1: AI VS AI) : ";
 	cin >> p;
-	cout << "×ÖÌå´óÐ¡: ";
+	cout << "å­—ä½“å¤§å°: ";
 	cin >> fs;
-	system("cls");
+	cClearScreen();
 	cSetFont((fs / 3 != 0 ? fs / 3 : fs / 3 + 1), fs);
 	if (p)
+	{
 		gMain0();
+	}
 	else
+	{
 		gMain1();
+	}
 	return 0;
 }
 
 void gMain0()
 {
-	int in;
 	bool cur = true;
 	int i;
-	cout << "AI AµÈ¼¶(ÖÕ¼«À§ÄÑÇëÊäÈë0): ";
+	cout << "AI Aç­‰çº§(ç»ˆæžå›°éš¾è¯·è¾“å…¥0): ";
 	cin >> lA;
-	cout << "AI BµÈ¼¶(ÖÕ¼«À§ÄÑÇëÊäÈë0): ";
+	cout << "AI Bç­‰çº§(ç»ˆæžå›°éš¾è¯·è¾“å…¥0): ";
 	cin >> lB;
 	gInit();
 	for (nCount = 0;; nCount++)
 	{
-		cGotoXY(msize, 0);
+		cGotoXY(msize + 1, 0);
 		cSetColor(15, 0);
-		cout << "µÚ" << nCount << "»ØºÏ" << endl;
+		cout << "ç¬¬" << nCount << "å›žåˆ" << endl;
 		if (cur)
 		{
-			do
+		Wait:
+			while (1)
 			{
-				in = getch();
-				if (in == 224)
+				if (Kbhit(' '))
 				{
-					in = getch();
-					if (in == 72)
-						gMove(-1, 0);
-					if (in == 80)
-						gMove(1, 0);
-					if (in == 75)
-						gMove(0, -1);
-					if (in == 77)
-						gMove(0, 1);
+					while (Kbhit(' '))
+						;
+					break;
 				}
-			} while (in != ' ' && in != 'f');
-			if (in == 'f')
-				cur = false;
+				if (Kbhit('F'))
+				{
+					while (Kbhit('F'))
+						;
+					cur = 0;
+					break;
+				}
+				if (Kbhit(27))
+				{
+					while (Kbhit(27))
+						;
+					gPause();
+				}
+			}
+		}
+		else
+		{
+			if (Kbhit('F'))
+			{
+				while (Kbhit('F'))
+					;
+				cur = 1;
+				goto Wait;
+			}
+			if (Kbhit(27))
+			{
+				goto Wait;
+			}
 		}
 		if (lA == 0)
 		{
-			gDecide('A', 1);
+			for (i = 1; i <= rand() % 20; i++)
+			{
+				gDecide('A', 1);
+			}
 		}
 		for (i = 1; i <= lA; i++)
 		{
@@ -116,7 +147,10 @@ void gMain0()
 		}
 		if (lB == 0)
 		{
-			gDecide('B', 1);
+			for (i = 1; i <= rand() % 20; i++)
+			{
+				gDecide('B', 1);
+			}
 		}
 		for (i = 1; i <= lB; i++)
 		{
@@ -130,16 +164,17 @@ void gMain1()
 {
 	int in;
 	int i;
-	cout << "AIµÈ¼¶(ÖÕ¼«À§ÄÑÇëÊäÈë0): ";
+	cout << "AIç­‰çº§(ç»ˆæžå›°éš¾è¯·è¾“å…¥0): ";
 	cin >> lB;
 	gInit();
 	for (nCount = 0;; nCount++)
 	{
-		cGotoXY(msize, 0);
+		cGotoXY(msize + 1, 0);
 		cSetColor(15, 0);
-		cout << "µÚ" << nCount << "»ØºÏ" << endl;
+		cout << "ç¬¬" << nCount << "å›žåˆ" << endl;
 		do
 		{
+		PlayerDecide:
 			in = getch();
 			if (in == 224)
 			{
@@ -153,15 +188,61 @@ void gMain1()
 				if (in == 77)
 					gMove(0, 1);
 			}
-		} while (in != 'w' && in != 's' && in != 'a' && in != 'd' && in != 'z' && in != ' ');
+		} while (in != 'w' && in != 's' && in != 'a' && in != 'd' && in != 'z' && in != ' ' && in != 27);
+		if (in == 27)
+		{
+			while (Kbhit(27))
+				;
+			gPause();
+		}
 		if (in == 'w')
+		{
+			if (sx < 1)
+			{
+				goto PlayerDecide;
+			}
+			if (cMap[sx - 1][sy] == 'X')
+			{
+				goto PlayerDecide;
+			}
 			gMoveNum(-1, 0, 'A');
+		}
 		if (in == 's')
+		{
+			if (sx >= msize - 1)
+			{
+				goto PlayerDecide;
+			}
+			if (cMap[sx + 1][sy] == 'X')
+			{
+				goto PlayerDecide;
+			}
 			gMoveNum(1, 0, 'A');
+		}
 		if (in == 'a')
+		{
+			if (sy < 1)
+			{
+				goto PlayerDecide;
+			}
+			if (cMap[sx][sy - 1] == 'X')
+			{
+				goto PlayerDecide;
+			}
 			gMoveNum(0, -1, 'A');
+		}
 		if (in == 'd')
+		{
+			if (sy >= msize - 1)
+			{
+				goto PlayerDecide;
+			}
+			if (cMap[sx][sy + 1] == 'X')
+			{
+				goto PlayerDecide;
+			}
 			gMoveNum(0, 1, 'A');
+		}
 		if (in == 'z')
 		{
 			in = getch();
@@ -176,7 +257,10 @@ void gMain1()
 		}
 		if (lB == 0)
 		{
-			gDecide('B', 1);
+			for (i = 1; i <= rand() % 20; i++)
+			{
+				gDecide('B', 1);
+			}
 		}
 		for (i = 1; i <= lB; i++)
 		{
@@ -186,14 +270,37 @@ void gMain1()
 	}
 }
 
+void gPause()
+{
+	while (Kbhit(27))
+		;
+	int i, in;
+	cClearScreen();
+	cGotoXY(0, cGetScreenWidth() / 2 - 2);
+	cout << "æš‚åœ";
+	cGotoXY(1, 0);
+	for (i = 1; i <= cGetScreenWidth(); i++)
+	{
+		cout << "-";
+	}
+	do
+	{
+		in = getch();
+	} while (in != 27);
+	while (Kbhit(27))
+		;
+	cClearScreen();
+}
+
 void gInit()
 {
 	int i, x, y;
 	string sSeed;
 	unsigned int sd = 20190622;
-	cout << "ÖÖ×Ó: ";
+	cout << "ç§å­: ";
 	cin >> sSeed;
-	system("cls");
+	cSetCursor(0);
+	cClearScreen();
 	for (i = 0; i < (int)sSeed.size(); i++)
 		sd = sd * 233 + sSeed[i];
 	srand(sd);
@@ -230,6 +337,17 @@ void gInit()
 			gChange(x, y);
 		}
 	}
+	cGotoXY(msize, 0);
+	for (i = 1; i <= msize * 5 + 2; i++)
+	{
+		cout << "-";
+	}
+	for (i = 0; i <= msize; i++)
+	{
+		cGotoXY(i, msize * 5 + 1);
+		cSetColor(7, 0);
+		cout << "|";
+	}
 	sx = sy = 0;
 	cGotoXY(0, 3);
 	cSetColor(15, 0);
@@ -249,8 +367,8 @@ inline void gMove(int dx, int dy)
 	sy = dy;
 	cGotoXY(sx, sy * 5 + 4);
 	cout << "<";
-	cGotoXY(msize + 1, 0);
-	cout << "ÓµÓÐÕß: Íæ¼Ò" << cMap[dx][dy] << ", ±øÁ¦: " << hp[dx][dy] << "            ";
+	cGotoXY(msize + 2, 0);
+	cout << "æ‹¥æœ‰è€…: çŽ©å®¶" << cMap[dx][dy] << ", å…µåŠ›: " << hp[dx][dy] << "            ";
 }
 
 inline void gMoveNum(int x, int y, int dx, int dy, char A)
@@ -267,9 +385,15 @@ inline void gMoveNum(int x, int y, int dx, int dy, char A)
 		return;
 	char &cd = cMap[dx][dy];
 	int &hd = hp[dx][dy], &hs = hp[x][y];
-	if (cd != a && cd != A && hd >= hs - 1)
+	if (cd == 'X' || hs == 1)
+	{
 		return;
-	if (cd == 0)
+	}
+	if (cd != a && cd != A && hd >= hs - 1)
+	{
+		hd -= hs - 1;
+	}
+	else if (cd == 0)
 	{
 		cd = a;
 		hd = hs - 1;
@@ -381,7 +505,7 @@ inline void gDecide(char A, bool d)
 					{
 						continue;
 					}
-					if ((cMap[dx][dy] == 0 || cMap[dx][dy] == b) && hp[dx][dy] < hp[i][j] - 1)
+					if ((cMap[dx][dy] == 0 || cMap[dx][dy] == b) && hp[dx][dy] / 5 * 4 < hp[i][j] - 1)
 					{
 						res.push_back({dir[k][0], dir[k][1], i, j});
 						break;
@@ -499,28 +623,37 @@ inline void gPlus()
 		}
 	}
 	cSetColor(15, 0);
-	cGotoXY(msize + 2, 0);
-	cout << "ºì·½±øÁ¦: " << aa << "   " << endl;
-	cout << "ºì·½ÍÁµØ: " << al << "   " << endl;
-	cout << "À¶·½±øÁ¦: " << ba << "   " << endl;
-	cout << "À¶·½ÍÁµØ: " << bl << "   " << endl;
+	cGotoXY(msize + 3, 0);
+	cout << "çº¢æ–¹å…µåŠ›: " << aa << "   " << endl;
+	cout << "çº¢æ–¹åœŸåœ°: " << al << "   " << endl;
+	cout << "è“æ–¹å…µåŠ›: " << ba << "   " << endl;
+	cout << "è“æ–¹åœŸåœ°: " << bl << "   " << endl;
 	gEnd();
 }
 
 void gEnd()
 {
-
 	if (cMap[0][0] == 'B')
 	{
-		cout << "À¶·½»ñÊ¤" << endl;
-		while (1)
-			;
+		for (long long i = 1; i <= 5000000000LL; i++)
+		{
+			i++;
+		}
+		cClearScreen();
+		cout << "è“æ–¹èŽ·èƒœ" << endl;
+		system("pause > nul");
+		exit(0);
 	}
 	if (cMap[msize - 1][msize - 1] == 'A')
 	{
-		cout << "ºì·½»ñÊ¤" << endl;
-		while (1)
-			;
+		for (long long i = 1; i <= 5000000000LL; i++)
+		{
+			i++;
+		}
+		cClearScreen();
+		cout << "çº¢æ–¹èŽ·èƒœ" << endl;
+		system("pause > nul");
+		exit(0);
 	}
 }
 
