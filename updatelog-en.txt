@@ -3,3 +3,6 @@
 2021/11/27:
 	Added level system of AI.
 	Move console functions into console.dll
+2021/11/28:
+        Optimized the game interface.
+	Added pause function. You can press ESC to pause now.
