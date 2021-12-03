@@ -1,5 +1,5 @@
-#ifndef CONSOLE_H
-#define CONSOLE_H
+#ifndef CONSOLE_HPP
+#define CONSOLE_HPP
 
 #ifdef BUILD_DLL
 #define EXPORT __declspec(dllexport)
@@ -17,6 +17,11 @@ namespace Console
     EXPORT inline void cSetCursor(bool b);      //Show or hide the cursor
     EXPORT inline void cClearScreen();          //Clear the screen
     EXPORT inline int cGetScreenWidth();        //Get the width of console
+}
+
+namespace Keyboard
+{
+    EXPORT inline bool kOnKeyDown(int key);    //Check if the key is pushed
 }
 
 #endif
