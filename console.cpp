@@ -27,7 +27,7 @@ namespace Console
         SetWindowLong(hCwindow, GWL_STYLE, (lWindow | WS_POPUP | WS_MAXIMIZE) & ~WS_THICKFRAME);
         SetWindowPos(hCwindow, HWND_TOP, 0, 0, cx, cy, 0);
 
-        cSetFont(7, 21);
+        cSetFont(7, 18);
 
         SetConsoleTitle("C2OI's Civilizations I");
     }
@@ -63,7 +63,7 @@ namespace Console
         cfi.nFont = 0;
         cfi.dwFontSize.X = x;
         cfi.dwFontSize.Y = y;
-        cfi.FontWeight = FW_THIN;
+        cfi.FontWeight = FW_BOLD;
         cfi.FontFamily = FF_DONTCARE;
         wcscpy(cfi.FaceName, L"Microsoft Yahei");
         HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -75,7 +75,7 @@ namespace Console
         HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
         CONSOLE_CURSOR_INFO cci;
         GetConsoleCursorInfo(hStdout, &cci);
-        cci.bVisible = FALSE;
+        cci.bVisible = (b ? TRUE : FALSE);
         SetConsoleCursorInfo(hStdout, &cci);
     }
 
@@ -100,5 +100,13 @@ namespace Console
         CONSOLE_SCREEN_BUFFER_INFO csbi;
         GetConsoleScreenBufferInfo(hStdout, &csbi);
         return csbi.dwSize.X;
+    }
+}
+
+namespace Keyboard
+{
+    EXPORT inline bool kOnKeyDown(int key)
+    {
+        return (GetAsyncKeyState(key) ? 1 : 0);
     }
 }
