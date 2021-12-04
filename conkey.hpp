@@ -1,5 +1,5 @@
-#ifndef CONSOLE_HPP
-#define CONSOLE_HPP
+#ifndef CONKEY_HPP
+#define CONKEY_HPP
 
 #ifdef BUILD_DLL
 #define EXPORT __declspec(dllexport)
