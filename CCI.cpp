@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
-#include <console.hpp>
 #include <fastout.hpp>
+#include <conkey.hpp>
 #include <conio.h>
 
 using namespace Keyboard;
@@ -8,11 +8,19 @@ using namespace Console;
 using namespace FastOut;
 using namespace std;
 
-const int cA = 5;	   //Red city
-const int cB = 3;	   //Blue city
-const int ca = 4;	   //Red ground
-const int cb = 1;	   //Blue ground
-const int cC = 0;	   //Black city
+const int cAb = 5;	//Red city back ground color
+const int cAf = 15; //Red city text color
+const int cBb = 3;	//Blue city back ground color
+const int cBf = 15; //Blue city text color
+const int cab = 4;	//Red ground back ground color
+const int caf = 15; //Red ground text color
+const int cbb = 1;	//Blue ground back ground color
+const int cbf = 15; //Blue ground text color
+const int cCb = 6;	//Black city back ground color
+const int cCf = 15; //Black city text color
+const int cXb = 6;	//Mountain back ground color
+const int cXf = 0;	//Mountain text color
+
 const int msize = 25;  //Map size
 const int mount = 100; //Mountain count
 const int grey = 100;  //City count
@@ -23,7 +31,6 @@ int nCount, sx, sy;							//Round accumulation, and the coordinates of the curso
 bool bVis[msize][msize];					//bfs
 int dir[4][2] = {1, 0, -1, 0, 0, 1, 0, -1}; //bfs
 int lA = 1, lB;								//Player level
-int fs;										//Font size
 bool p;										//Game type
 
 //Decision information: the number at position (x, y) is moved to (x + dx, y + dy)
@@ -33,6 +40,7 @@ struct dRet
 	int y;
 	int dx;
 	int dy;
+	int percent;
 };
 
 //bfs
@@ -49,7 +57,8 @@ inline void gMove(int dx, int dy); //Move the cursor
 //For following 5 functions, make sure A == 'A' or A == 'B'
 inline void gMoveNum(int dx, int dy, char A);
 inline void gMoveNum(int x, int y, int dx, int dy, char A);
-inline void gDiv(int dx, int dy, char A);
+inline void gDiv(int x, int y, int dx, int dy, int percent, char A);
+inline void gDiv(int dx, int dy, int percent, char A);
 inline void gDecide(char A, bool d);
 inline dRet gBFS(int x, int y, char A);
 inline void gPlus();			   //Increases the army every round, count army and land
@@ -64,13 +73,14 @@ int main()
 	cInitConsole();
 	qout << "玩法 (0: 玩家 VS AI, 1: AI VS AI) : ";
 	cin >> p;
-	qout << "字体大小: ";
-	cin >> fs;
-	cClearScreen();
 	if (p)
+	{
 		gMain0();
+	}
 	else
+	{
 		gMain1();
+	}
 	return 0;
 }
 
@@ -83,6 +93,9 @@ void gMain0()
 	qout << "AI B等级(终极困难请输入0): ";
 	cin >> lB;
 	gInit();
+	while (kOnKeyDown('F') || kOnKeyDown(' '))
+	{
+	}
 	for (nCount = 0;; nCount++)
 	{
 		cGotoXY(msize, 0);
@@ -138,7 +151,7 @@ void gMain0()
 
 void gMain1()
 {
-	int in;
+	int in, cStart, percent;
 	int i;
 	qout << "AI等级(终极困难请输入0): ";
 	cin >> lB;
@@ -151,18 +164,27 @@ void gMain1()
 		do
 		{
 		Decide:
+			gChange(sx, sy);
 			in = getch();
 			if (in == 224)
 			{
 				in = getch();
 				if (in == 72)
+				{
 					gMove(-1, 0);
+				}
 				if (in == 80)
+				{
 					gMove(1, 0);
+				}
 				if (in == 75)
+				{
 					gMove(0, -1);
+				}
 				if (in == 77)
+				{
 					gMove(0, 1);
+				}
 			}
 		} while (in != 'w' && in != 's' && in != 'a' && in != 'd' && in != 'z' && in != ' ');
 		if (in == 'w')
@@ -199,14 +221,59 @@ void gMain1()
 		}
 		if (in == 'z')
 		{
-			in = getch();
+			if (cMap[sx][sy] != 'A' && cMap[sx][sy] != 'a')
+			{
+				goto Decide;
+			}
+			while (kOnKeyDown('Z'))
+			{
+			}
+			percent = 50;
+			(cMap[sx][sy] == 'A' ? cSetColor(cAf, cAb) : cSetColor(caf, cab));
+			cGotoXY(sx, sy * 5);
+			qout << " 50%";
+			while (!kbhit())
+			{
+			}
+			if (kOnKeyDown('Z'))
+			{
+				percent = 1;
+				cStart = clock();
+				while (kOnKeyDown('Z') && percent < 100)
+				{
+					if ((clock() - cStart + 10) % 60 <= 10)
+					{
+						(cMap[sx][sy] == 'A' ? cSetColor(cAf, cAb) : cSetColor(caf, cab));
+						cGotoXY(sx, sy * 5);
+						qout << "    ";
+						(cMap[sx][sy] == 'A' ? cSetColor(cAf, cAb) : cSetColor(caf, cab));
+						cGotoXY(sx, sy * 5);
+						if (percent < 10)
+						{
+							qout << "  " << percent << "%";
+						}
+						else
+						{
+							qout << " " << percent << "%";
+						}
+						++percent;
+					}
+				}
+				while (kOnKeyDown('Z'))
+				{
+				}
+			}
+			do
+			{
+				in = getch();
+			} while (in != 'w' && in != 's' && in != 'a' && in != 'd');
 			if (in == 'w')
 			{
 				if (sx < 1 || cMap[sx - 1][sy] == 'X')
 				{
 					goto Decide;
 				}
-				gDiv(-1, 0, 'A');
+				gDiv(-1, 0, percent, 'A');
 			}
 			if (in == 's')
 			{
@@ -214,7 +281,7 @@ void gMain1()
 				{
 					goto Decide;
 				}
-				gDiv(1, 0, 'A');
+				gDiv(1, 0, percent, 'A');
 			}
 			if (in == 'a')
 			{
@@ -222,7 +289,7 @@ void gMain1()
 				{
 					goto Decide;
 				}
-				gDiv(0, -1, 'A');
+				gDiv(0, -1, percent, 'A');
 			}
 			if (in == 'd')
 			{
@@ -230,7 +297,7 @@ void gMain1()
 				{
 					goto Decide;
 				}
-				gDiv(0, 1, 'A');
+				gDiv(0, 1, percent, 'A');
 			}
 		}
 		if (lB == 0)
@@ -247,6 +314,7 @@ void gMain1()
 
 void gInit()
 {
+	system("color 0f");
 	int i, x, y;
 	string sSeed;
 	unsigned int sd = 20190622;
@@ -254,9 +322,11 @@ void gInit()
 	cin >> sSeed;
 	cClearScreen();
 	cSetCursor(0);
-	cSetFont(((int)(fs / 3.6) != 0 ? (int)(fs / 3.6) : (int)(fs / 3.6) + 1), fs);
+	cSetFont(5, 18);
 	for (i = 0; i < (int)sSeed.size(); i++)
+	{
 		sd = sd * 233 + sSeed[i];
+	}
 	srand(sd);
 	cMap[0][0] = 'A';
 	hp[0][0] = 1;
@@ -273,9 +343,7 @@ void gInit()
 		else
 		{
 			cMap[x][y] = 'X';
-			cGotoXY(x, y * 5);
-			cSetColor(15, 0);
-			qout << "  X";
+			gChange(x, y);
 		}
 	}
 	for (i = 1; i <= grey; i++)
@@ -287,7 +355,7 @@ void gInit()
 		else
 		{
 			cMap[x][y] = 'C';
-			hp[x][y] = 40 + rand() % 10;
+			hp[x][y] = 40 + rand() % 11;
 			gChange(x, y);
 		}
 	}
@@ -299,19 +367,24 @@ void gInit()
 
 inline void gMove(int dx, int dy)
 {
-	cSetColor(15, 0);
 	dx += sx;
 	dy += sy;
 	if (!(dx >= 0 && dx < msize && dy >= 0 && dy < msize))
+	{
 		return;
+	}
 	cGotoXY(sx, sy * 5 + 4);
+	cSetColor(15, 0);
 	qout << " ";
 	sx = dx;
 	sy = dy;
 	cGotoXY(sx, sy * 5 + 4);
+	cSetColor(15, 0);
 	qout << "<";
 	cGotoXY(msize + 1, 0);
-	qout << "拥有者: 玩家" << cMap[dx][dy] << ", 兵力: " << hp[dx][dy] << "            ";
+	qout << "拥有者: " << ((cMap[dx][dy] == 'A' || cMap[dx][dy] == 'a') ? "玩家A" : (cMap[dx][dy] == 'B' || cMap[dx][dy] == 'b') ? "玩家B"
+																																 : "无")
+		 << ", 兵力: " << hp[dx][dy] << "            ";
 }
 
 inline void gMoveNum(int x, int y, int dx, int dy, char A)
@@ -321,11 +394,15 @@ inline void gMoveNum(int x, int y, int dx, int dy, char A)
 	B = (A == 'A') ? 'B' : 'A';
 	b = B - 'A' + 'a';
 	if (cMap[x][y] != a && cMap[x][y] != A)
+	{
 		return;
+	}
 	dx += x;
 	dy += y;
 	if (!(dx >= 0 && dx < msize && dy >= 0 && dy < msize && cMap[dx][dy] != 'X'))
+	{
 		return;
+	}
 	char &cd = cMap[dx][dy];
 	int &hd = hp[dx][dy], &hs = hp[x][y];
 	if (cd == 'X' || hs == 1)
@@ -369,22 +446,22 @@ inline void gMoveNum(int dx, int dy, char A)
 	gMove(dx, dy);
 }
 
-inline void gDiv(int dx, int dy, char A)
+inline void gDiv(int x, int y, int dx, int dy, int percent, char A)
 {
 	char a, B, b;
 	a = A - 'A' + 'a';
 	B = (A == 'A') ? 'B' : 'A';
 	b = B - 'A' + 'a';
-	if (cMap[sx][sy] != a && cMap[sx][sy] != A)
+	if (cMap[x][y] != a && cMap[x][y] != A)
 		return;
-	dx += sx;
-	dy += sy;
+	dx += x;
+	dy += y;
 	if (!(dx >= 0 && dx < msize && dy >= 0 && dy < msize && cMap[dx][dy] != 'X'))
 	{
 		return;
 	}
 	char &cd = cMap[dx][dy];
-	int &hd = hp[dx][dy], &hs = hp[sx][sy], tmp = hs / 2;
+	int &hd = hp[dx][dy], &hs = hp[x][y], tmp = hs * percent / 100;
 	if (tmp == 0 || cd == 'X' || hs == 1)
 	{
 		return;
@@ -417,8 +494,13 @@ inline void gDiv(int dx, int dy, char A)
 	}
 	hs -= tmp;
 	gChange(dx, dy);
-	gChange(sx, sy);
-	gMove(dx - sx, dy - sy);
+	gChange(x, y);
+}
+
+inline void gDiv(int dx, int dy, int percent, char A)
+{
+	gDiv(sx, sy, dx, dy, percent, A);
+	gMove(dx, dy);
 }
 
 inline void gDecide(char A, bool d)
@@ -609,39 +691,98 @@ void gEnd()
 
 inline void gChange(int x, int y)
 {
-	int c;
+	int cb = 0, cf = 15;
 	char cm = cMap[x][y];
-	if (cm == 'A')
-		c = cA;
-	if (cm == 'a')
-		c = ca;
-	if (cm == 'B')
-		c = cB;
-	if (cm == 'b')
-		c = cb;
-	if (cm == 'C')
-		c = cC;
+	switch (cm)
+	{
+	case 'A':
+	{
+		cb = cAb;
+		cf = cAf;
+		break;
+	}
+	case 'a':
+	{
+		cb = cab;
+		cf = caf;
+		break;
+	}
+	case 'B':
+	{
+		cb = cBb;
+		cf = cBf;
+		break;
+	}
+	case 'b':
+	{
+		cb = cbb;
+		cf = cbf;
+		break;
+	}
+	case 'C':
+	{
+		cb = cCb;
+		cf = cCf;
+		break;
+	}
+	case 'X':
+	{
+		cb = cXb;
+		cf = cXf;
+	}
+	}
 	cGotoXY(x, y * 5);
-	cSetColor(15, c);
+	cSetColor(cf, cb);
+	if (cMap[x][y] == 'X')
+	{
+		qout << " ^/\\";
+		cSetColor(15, 0);
+		return;
+	}
 	int val = hp[x][y];
-	if (val < 10)
+	if (val == 0)
+	{
+		qout << "    ";
+	}
+	else if (val < 10)
+	{
 		qout << "   " << val;
+	}
 	else if (val < 100)
+	{
 		qout << "  " << val;
+	}
 	else if (val < 1000)
+	{
 		qout << " " << val;
+	}
 	else if (val < 10000)
+	{
 		qout << "  " << val / 1000 << 'K';
+	}
 	else if (val < 100000)
+	{
 		qout << " " << val / 1000 << 'K';
+	}
 	else if (val < 1000000)
+	{
 		qout << val / 1000 << 'K';
+	}
 	else if (val < 10000000)
+	{
 		qout << "  " << val / 1000000 << 'M';
+	}
 	else if (val < 100000000)
+	{
 		qout << " " << val / 1000000 << 'M';
+	}
 	else if (val < 1000000000)
+	{
 		qout << val / 1000000 << 'M';
+	}
 	else
+	{
 		qout << "INF";
+	}
+	cSetColor(15, 0);
 }
