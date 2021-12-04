@@ -1,7 +1,8 @@
 #define BUILD_DLL
 
-#include <console.hpp>
+#include <conkey.hpp>
 #include <windows.h>
+#include <stdlib.h>
 #include <thread>
 
 using namespace std;
@@ -30,6 +31,8 @@ namespace Console
         cSetFont(7, 18);
 
         SetConsoleTitle("C2OI's Civilizations I");
+
+        Sleep(500);
     }
 
     EXPORT void cHideScrollBar()
