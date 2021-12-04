@@ -1,5 +1,5 @@
-#ifndef FASTO_HPP
-#define FASTO_HPP
+#ifndef FASTOUT_HPP
+#define FASTOUT_HPP
 
 #ifdef BUILD_DLL
 #define EXPORT __declspec(dllexport)
